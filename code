@@ -1,0 +1,68 @@
+open class Person (var name: String, var birthYear: Int){
+    var age = 2021- birthYear
+}
+
+class Student (var studName: String, var studBirthYear: Int,
+              var averageGrade: Double, var extramural: Boolean = false)
+	:Person(studName,studBirthYear){
+        override fun toString(): String {
+            return ("name: $studName, birth year: $studBirthYear, average grade: $averageGrade, extramural: $extramural")
+        }
+    }
+    
+class Lecturer (var lectName: String, var lectBirthYear: Int,
+                var degree: String, var experienceFrom: Int)
+    : Person(lectName,lectBirthYear){
+    override fun toString(): String {
+        return ("name: $lectName, birth year: $lectBirthYear, degree: $degree, experienceFrom: $experienceFrom")
+    }
+}
+    
+    fun main() {
+    val persons = mutableListOf<Person>(Student("Kirill",2000,4.9,true),
+        Student("Alexander",2001,4.7),
+        Student("Oleg",2000,3.9,true),
+        Student("Misha",1999,4.5),
+        Student("Konor",2000,4.1),
+        Lecturer("Ivan Ivanov",1975,"candidate",2000),
+        Lecturer("Petr Petrov",1968,"professor",1995),
+        Lecturer("Grig Grigov",1980,"doctor",2007),
+        Lecturer("Sidr Sidrov",1962,"candidate",1999),
+        Lecturer("Konr Konrov",1982,"professor",2009)
+    )
+    println("Without sort:")
+    println(persons.joinToString( separator = "\n"))
+
+    println("After sortByAge:")
+    sortByAge(persons)
+
+    println("After sortByNameStudents:")
+    val sortByNameStudents = persons.sortByNameStudents()
+    println(sortByNameStudents.joinToString( separator = "\n"))
+
+    println("After sortByAverageGrade:")
+    val sortByAverageGrade = persons.sortByAverageGrade(false)
+    println(sortByAverageGrade.joinToString( separator = "\n"))
+    
+    }
+    
+    fun sortByAge(persons:List<Person>):List<Person> {
+    val sortedList = persons.sortedWith(compareBy(Person::age)).reversed()
+    println(sortedList.joinToString( separator = "\n"))
+    return sortedList
+}
+    fun MutableList<Person>.sortByNameStudents():List<Student>
+{
+    return this.filter{ it is Student }.sortedByDescending{ it.name } as List<Student>
+}
+
+fun MutableList<Person>.sortByAverageGrade(exceptExtramural : Boolean):List<Student>
+{
+    if (exceptExtramural) {
+        return this.sortByNameStudents().filter{it.extramural == false}.sortedByDescending{ it.averageGrade } as List<Student>
+    } else
+    {
+        return this.sortByNameStudents().sortedByDescending{ it.averageGrade } as List<Student>
+    }
+
+}
